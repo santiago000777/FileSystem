@@ -1,6 +1,13 @@
 #include "common.h"
 #include "File.h"
 
+static bool IsPressed(short key) {
+	if (GetAsyncKeyState(toupper(key)) & 0x8000) {
+		return true;
+	}
+	return false;
+}
+
 class A {
 public:
 	A() {}
@@ -21,14 +28,14 @@ public:
 int main() {
 	File file("BinExample.bin");
 
-	std::vector<A> vA;
-	vA.push_back({ 4, 8.54f });
-	vA.push_back({ 15, 0.57f });
-
+	std::vector<std::unique_ptr<A>> vA;
+	vA.emplace_back(std::make_unique<A>(4, 8.54f));
+	vA.emplace_back(std::make_unique<A>(15, 0.57f));
+	/*std::vector<A> vA;
+	vA.emplace_back(4, 8.54f);
+	vA.emplace_back(15, 0.57f);*/
 	std::vector<int> vI { 4, 5, 7 };
-
 	std::string s = "Ahoj";
-
 	//	const int* p1  -> p1 je pointer na constantu int
 	//	int *const p2  -> p2 je constantni pointer na int
 	//	int const* p3  -> p3 je pointer na constantu int
@@ -37,7 +44,8 @@ int main() {
 	file.Clear();
 	file.Open(File::MODE::WRITE);
 	
-	file.Save(vA, vA[0].GetSize());
+	//file.Save(vA, vA[0].GetSize());
+	file.Save(vA, vA[0]->GetSize());
 
 	file.Save(vI);
 
@@ -47,7 +55,7 @@ int main() {
 #elif STATE == 1
 	file.Open(File::MODE::READ);
 
-	std::vector<A> result;
+	std::vector<std::unique_ptr<A>> result;
 	file.Load(result, 9);
 	std::vector<int> resultI;
 	file.Load(resultI);
@@ -55,6 +63,40 @@ int main() {
 	file.Load(resultS);
 
 #endif
+
+	/*int p = 0;
+	int r;
+	while (!IsPressed(VK_ESCAPE)) {
+		if (IsPressed('s')) {
+			std::cout << "S\n";
+			file.Clear();
+			file.Open(File::MODE::WRITE);
+			
+			file.Save(vA, vA[0].GetSize());
+			
+			file.Save(vI);
+			
+			file.Save(s);
+			
+			p++;
+			file.Save(p);
+			std::cout << p << "\n";
+			std::cout << "Prepsano!\n";
+		}
+		if (IsPressed('l')) {
+			std::cout << "L\n";
+			file.Open(File::MODE::READ);
+
+			std::vector<A> result;
+			file.Load(result, 9);
+			std::vector<int> resultI;
+			file.Load(resultI);
+			std::string resultS;
+			file.Load(resultS);
+			file.Load(p);
+		}
+	}*/
+
 
 	// Git commands
 /*
@@ -76,7 +118,8 @@ int main() {
 	* git status								-> rozdily mezi kodem a poslednim commitem
 
 	* git add <path>							-> pridani daneho souboru, ktery se zmenil, ke commitu
-	* git add -A								-> pridani vsech souboru, ktery se zmenil, ke commitu
+	* git add .									-> pridani vsech souboru, ktery se zmenil, ke commitu
+	* git rm -r --cached <path>					-> odebrani zmeny
 
 	* git commit -m "<msg>"						-> commit se zpravou
 	* git push origin <branch>					-> nahrani do githubu
