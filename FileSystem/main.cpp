@@ -23,6 +23,14 @@ public:
 	float d { 1.54f };
 	char x = 'a';
 };
+class Vec4f {
+public:
+	Vec4f() {}
+
+	float x, y, w, h;
+	int i;
+	char c;
+};
 
 #define STATE	1
 int main() {
@@ -40,6 +48,12 @@ int main() {
 	//	int *const p2  -> p2 je constantni pointer na int
 	//	int const* p3  -> p3 je pointer na constantu int
 	
+	vI.resize(6);
+	vI.resize(2);
+
+	Vec4f vecf;
+	std::cout << sizeof(vecf) << ' ' << sizeof(float) * 4 + 4 + 1;
+
 #if STATE == 0
 	file.Clear();
 	file.Open(File::MODE::WRITE);

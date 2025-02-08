@@ -187,4 +187,3 @@ private:
 	std::string fileName;
 	std::fstream file;
 };
-
